@@ -1,0 +1,152 @@
+------------------query1: all Martians with their corresponding bases----------------
+
+SELECT 
+    martian.martian_id AS Martian_ID,
+    CONCAT( martian.first_name, ' ', martian.last_name) AS 'Martians Fullname',
+    IFNULL(base.base_name,"Top Supervisor") AS 'Base Name'
+FROM
+    martian
+LEFT JOIN base ON 
+    martian.base_id = base.base_id
+
+ORDER BY  martian.martian_id
+
+------------------query2: all Martians and the person they report to----------------
+
+SELECT 
+    e.martian_id AS Martian_ID,
+    CONCAT( e.first_name, ' ', e.last_name) AS 'Martians',
+    IFNULL(CONCAT(m.first_name, ' ', m.last_name),
+            'Top Supervisor') AS 'Martian Leader'
+FROM
+    martian e
+LEFT JOIN martian m ON 
+    m.martian_id = e.super_id 
+ORDER BY e.martian_id
+
+------------------query3: all supplies of each base to determine what supply items are missing.----------------
+SELECT
+  base.base_name,
+  supply.name,
+  inventory.quantity
+FROM base
+JOIN inventory
+  ON base.base_id = inventory.base_id
+JOIN supply
+  ON inventory.supply_id = supply.supply_id
+
+
+-----martian supervisor base
+SELECT 
+    e.martian_id AS Martian_ID,
+    CONCAT( e.first_name, ' ', e.last_name) AS 'Martians',
+    IFNULL(CONCAT(m.first_name, ' ', m.last_name),
+            'Top Supervisor') AS 'Martian Leader',
+    base.base_name AS 'Base Name'
+     
+FROM
+    martian e
+INNER JOIN martian m ON 
+    m.martian_id = e.super_id
+INNER JOIN base ON
+	m.base_id = base.base_id	
+ 
+    
+------------------version 2
+
+
+SELECT 
+    e.martian_id AS Martian_ID,
+    CONCAT( e.first_name, ' ', e.last_name) AS 'Martians',
+    IFNULL(CONCAT(m.first_name, ' ', m.last_name),
+            'Top Supervisor') AS 'Martian Leader',
+    IFNULL(base.base_name, 'Top Supervisor') AS 'Base Name'
+FROM
+    martian e
+LEFT JOIN martian m ON 
+    m.martian_id = e.super_id 
+LEFT JOIN base ON
+	m.base_id = base.base_id
+
+----------------version 3 with WHERE supper id
+
+
+SELECT 
+    e.martian_id AS Martian_ID,
+    CONCAT( e.first_name, ' ', e.last_name) AS 'Martians',
+    IFNULL(CONCAT(m.first_name, ' ', m.last_name),
+            'Top Supervisor') AS 'Martian Leader',
+    IFNULL(base.base_name, 'Top Supervisor') AS 'Base Name'
+FROM
+    martian e
+LEFT JOIN martian m ON 
+    m.martian_id = e.super_id 
+LEFT JOIN base ON
+	m.base_id = base.base_id
+
+WHERE e.super_id = "1"
+
+
+-------------------------deleting marthings series
+DELETE FROM `martian` WHERE `martian`.`martian_id` = 15;
+
+-----------------------insert marthian series
+INSERT INTO `martian` (`martian_id`, `first_name`, `last_name`, `base_id`, `super_id`) VALUES (NULL, 'testingf', 'testingl', '1', '7');
+
+-------------------------update marthian------- *update super id
+UPDATE `martian` SET `super_id` = '12' WHERE `martian`.`martian_id` = 8;
+
+
+
+----------------------------------------Portal Name with data
+SELECT 
+COUNT(base.base_name) AS 'No of Member',
+    e.martian_id AS Martian_ID,
+    CONCAT( e.first_name, ' ', e.last_name) AS 'Martians',
+    IFNULL(CONCAT(m.first_name, ' ', m.last_name),
+            'Top Supervisor') AS 'Martian Leader',
+    base.base_name AS 'Base Name'
+
+FROM
+    martian e
+INNER JOIN martian m ON 
+    m.martian_id = e.super_id
+INNER JOIN base ON
+	m.base_id = base.base_id	
+    
+GROUP BY base.base_name
+
+
+-----------------portal table martian full-----
+SELECT 
+    e.martian_id AS Martian_ID,
+    CONCAT( e.first_name, ' ', e.last_name) AS 'Martians',
+    IFNULL(base.base_name,"Top Supervisor") AS 'Base Name',
+    IFNULL(CONCAT(m.first_name, ' ', m.last_name),
+            'Top Supervisor') AS 'Martian Leader'
+FROM
+    martian e
+LEFT JOIN martian m ON 
+    m.martian_id = e.super_id
+LEFT JOIN base ON 
+    e.base_id = base.base_id
+    
+ORDER BY e.martian_id
+
+
+-----------------ortal table martian full----- v2 ---- no concat
+SELECT e.martian_id,e.first_name, e.last_name, IFNULL(base.base_name,"Top Supervisor"), IFNULL(m.first_name,"Top Supervisor"), IFNULL(m.last_name,"Top Supervisor") FROM martian e LEFT JOIN martian m ON m.martian_id = e.super_id LEFT JOIN base ON e.base_id = base.base_id ORDER BY e.martian_id;
+
+
+
+    $sql = "SELECT
+            COUNT(base.base_name) AS 'No of Member',
+            e.martian_id AS Martian_ID,
+            CONCAT( e.first_name, ' ', e.last_name) AS 'Martians',
+            IFNULL(CONCAT(m.first_name, ' ', m.last_name),'Top Supervisor') AS 'Martian Leader',
+            base.base_name AS 'Base Name'
+            FROM martian e
+            INNER JOIN martian m ON m.martian_id = e.super_id
+            INNER JOIN base ON m.base_id = base.base_id
+            GROUP BY base.base_name
+        ";
